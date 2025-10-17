@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>القرآن الكريم بصوت العفاسي</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background-color: black;
+    }
+    body {
+      background: url('https://a.top4top.io/p_35778c1x51.jpg') no-repeat center center fixed;
+      background-size: contain; /* احتواء الصورة بالكامل */
+    }
+    #notice {
+      position: absolute;
+      bottom: 10%;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-size: 1.2rem;
+      font-family: 'Amiri', serif;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.5rem;
+      border-radius: 1rem;
+    }
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="notice">📖 جاري تشغيل القرآن الكريم بصوت العفاسي...</div>
+  <audio id="player" preload="auto"></audio>
+
+  <script>
+    const player = document.getElementById('player');
+
+    // روابط سور القرآن بصوت العفاسي
+    const surahs = [];
+    for (let i = 1; i <= 114; i++) {
+      const num = i.toString().padStart(3, '0');
+      surahs.push(`https://server8.mp3quran.net/afs/${num}.mp3`);
+    }
+
+    let index = 0;
+
+    function playNext() {
+      if (index < surahs.length) {
+        player.src = surahs[index];
+        player.volume = 0.6; // مستوى صوت معتدل
+        const playPromise = player.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            console.log(`تشغيل السورة رقم ${index + 1}`);
+          }).catch(err => {
+            document.getElementById('notice').innerHTML = 
+              '⚠️ المتصفح منع التشغيل التلقائي، يرجى الضغط على زر التشغيل يدويًا.';
+            console.warn(err);
+          });
+        }
+        player.onended = () => {
+          index++;
+          playNext();
+        };
+      }
+    }
+
+    // نحاول تشغيل الصوت بعد تحميل الصفحة بثانية لتجنب المنع
+    window.addEventListener('load', () => {
+      setTimeout(playNext, 1000);
+    });
+  </script>
+</body>
+</html>
