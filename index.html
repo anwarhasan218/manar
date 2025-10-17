@@ -10,57 +10,51 @@
       padding: 0;
       height: 100%;
       width: 100%;
+      background: url('https://l.top4top.io/p_35776k5si1.jpg') no-repeat center center fixed;
+      background-size: contain;
       overflow: hidden;
+      font-family: 'Amiri', serif;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
       background-color: black;
       cursor: pointer;
     }
-    body {
-      background: url('https://a.top4top.io/p_35778c1x51.jpg') no-repeat center center fixed;
-      background-size: contain; /* احتواء الصورة بالكامل */
+    #message {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px 40px;
+      border-radius: 20px;
+      font-size: 1.3rem;
     }
-    #notice {
-      position: absolute;
-      bottom: 10%;
-      width: 100%;
-      text-align: center;
-      color: white;
-      font-size: 1.2rem;
-      font-family: 'Amiri', serif;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 0.5rem;
-      border-radius: 1rem;
-      transition: opacity 1s ease;
-    }
-    audio {
-      display: none;
-    }
+    audio { display: none; }
   </style>
 </head>
 <body>
-  <div id="notice">👆 حرّك الماوس أو المس الشاشة لتبدأ التلاوة</div>
-  <audio id="player" preload="auto"></audio>
+  <div id="message">👆 اضغط في أي مكان لتبدأ تلاوة القرآن الكريم بصوت العفاسي</div>
+  <audio id="player"></audio>
 
   <script>
     const player = document.getElementById('player');
-    const notice = document.getElementById('notice');
-    let index = 0;
-
-    // روابط سور القرآن بصوت العفاسي
+    const message = document.getElementById('message');
     const surahs = [];
+
     for (let i = 1; i <= 114; i++) {
       const num = i.toString().padStart(3, '0');
       surahs.push(`https://server8.mp3quran.net/afs/${num}.mp3`);
     }
 
+    let index = 0;
+
     function playNext() {
       if (index < surahs.length) {
         player.src = surahs[index];
-        player.volume = 0.6;
+        player.volume = 0.8;
         player.play().then(() => {
           console.log(`تشغيل السورة رقم ${index + 1}`);
-        }).catch(err => {
-          console.warn('لم يتم التشغيل:', err);
-        });
+        }).catch(err => console.warn('لم يتم التشغيل:', err));
+
         player.onended = () => {
           index++;
           playNext();
@@ -69,16 +63,15 @@
     }
 
     function startPlayback() {
-      notice.innerText = '📖 جاري تشغيل القرآن الكريم بصوت العفاسي...';
+      message.textContent = "📖 جاري تشغيل القرآن الكريم بصوت العفاسي...";
       playNext();
-      setTimeout(() => {
-        notice.style.opacity = 0;
-      }, 3000);
-      document.removeEventListener('mousemove', startPlayback);
+      setTimeout(() => message.style.opacity = '0', 4000);
+      document.removeEventListener('click', startPlayback);
       document.removeEventListener('touchstart', startPlayback);
     }
 
-    document.addEventListener('mousemove', startPlayback, { once: true });
+    // أول تفاعل من المستخدم فقط (نقرة أو لمس)
+    document.addEventListener('click', startPlayback, { once: true });
     document.addEventListener('touchstart', startPlayback, { once: true });
   </script>
 </body>
