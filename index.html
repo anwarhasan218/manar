@@ -12,6 +12,7 @@
       width: 100%;
       overflow: hidden;
       background-color: black;
+      cursor: pointer;
     }
     body {
       background: url('https://a.top4top.io/p_35778c1x51.jpg') no-repeat center center fixed;
@@ -28,6 +29,7 @@
       background: rgba(0, 0, 0, 0.4);
       padding: 0.5rem;
       border-radius: 1rem;
+      transition: opacity 1s ease;
     }
     audio {
       display: none;
@@ -35,11 +37,13 @@
   </style>
 </head>
 <body>
-  <div id="notice">📖 جاري تشغيل القرآن الكريم بصوت العفاسي...</div>
+  <div id="notice">👆 حرّك الماوس أو المس الشاشة لتبدأ التلاوة</div>
   <audio id="player" preload="auto"></audio>
 
   <script>
     const player = document.getElementById('player');
+    const notice = document.getElementById('notice');
+    let index = 0;
 
     // روابط سور القرآن بصوت العفاسي
     const surahs = [];
@@ -48,22 +52,15 @@
       surahs.push(`https://server8.mp3quran.net/afs/${num}.mp3`);
     }
 
-    let index = 0;
-
     function playNext() {
       if (index < surahs.length) {
         player.src = surahs[index];
-        player.volume = 0.6; // مستوى صوت معتدل
-        const playPromise = player.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            console.log(`تشغيل السورة رقم ${index + 1}`);
-          }).catch(err => {
-            document.getElementById('notice').innerHTML = 
-              '⚠️ المتصفح منع التشغيل التلقائي، يرجى الضغط على زر التشغيل يدويًا.';
-            console.warn(err);
-          });
-        }
+        player.volume = 0.6;
+        player.play().then(() => {
+          console.log(`تشغيل السورة رقم ${index + 1}`);
+        }).catch(err => {
+          console.warn('لم يتم التشغيل:', err);
+        });
         player.onended = () => {
           index++;
           playNext();
@@ -71,10 +68,18 @@
       }
     }
 
-    // نحاول تشغيل الصوت بعد تحميل الصفحة بثانية لتجنب المنع
-    window.addEventListener('load', () => {
-      setTimeout(playNext, 1000);
-    });
+    function startPlayback() {
+      notice.innerText = '📖 جاري تشغيل القرآن الكريم بصوت العفاسي...';
+      playNext();
+      setTimeout(() => {
+        notice.style.opacity = 0;
+      }, 3000);
+      document.removeEventListener('mousemove', startPlayback);
+      document.removeEventListener('touchstart', startPlayback);
+    }
+
+    document.addEventListener('mousemove', startPlayback, { once: true });
+    document.addEventListener('touchstart', startPlayback, { once: true });
   </script>
 </body>
 </html>
